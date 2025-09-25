@@ -58,12 +58,13 @@ VALIDATE $? "starting shipping"
 dnf install mysql -y  &>>$LOG_FILE
 VALIDATE $? "installing mysql"
 
-mysql -h $MYSQL_HOST -uroot -pRoboShop@1 -e 'use cities'
+#mysql -h $MYSQL_HOST -uroot -pRoboShop@1 -e 'use cities'  &>>$LOG_FILE
+mysql -h $MYSQL_HOST -uroot -pRoboShop@1 -e 'show databases like "cities";' | grep cities &>>$LOG_FILE
 if [ $? -ne 0 ]
 then
-    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/schema.sql
-    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/app-user.sql 
-    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/master-data.sql
+    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/schema.sql  &>>$LOG_FILE
+    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/app-user.sql  &>>$LOG_FILE
+    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/master-data.sql  &>>$LOG_FILE
 else
     echo -e "shipping  data is laready loaded.. $Y SKIPPING $N"
 fi    

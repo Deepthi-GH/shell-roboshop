@@ -43,33 +43,50 @@ then
 else
     echo -e "user already existing...$Y SKIPPING $N"    
 fi
+
 mkdir -p /app  &>>$LOG_FILE
 VALIDATE $? "created /app directory"
+
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE
+VALIDATE $? "downloading catalogue application"
+
 cd /app 
+VALIDATE $? "changing to app directory"
+rm -rf /app/*
+VALIDATE $? "removing existing code"
+
 unzip /tmp/catalogue.zip &>>$LOG_FILE
 VALIDATE $? "unzipping the code"
-cd /app 
+
 npm install &>>$LOG_FILE
 VALIDATE $? "downloading dependencies"
+
 cp $SCRIPT_DIR/catalogue.servive /etc/systemd/system/catalogue.service
 systemctl daemon-reload &>>$LOG_FILE
 VALIDATE $? "daemon reload"
+
 systemctl enable catalogue &>>$LOG_FILE
 VALIDATE $? "enable catalogue"
+
 systemctl start catalogue &>>$LOG_FILE
 VALIDATE $? "start catalogue"
+
 cp mongo.repo /etc/yum.repos.d/mongo.repo
 dnf install mongodb-mongosh -y &>>$LOG_FILE
 VALIDATE $? "installing mongodb client"
+
 mongosh --host $MONGODB_HOST </app/db/master-data.js &>>$LOG_FILE
 VALIDATE $? "load products data"
-mongosh --host MONGODB-SERVER-IPADDRESS &>>$LOG_FILE
 
-show dbs &>>$LOG_FILE
-use catalogue &>>$LOG_FILE
-show collections &>>$LOG_FILE
-db.products.find() &>>$LOG_FILE
+systemctl restart catalogue
+VALIDATE $? "restarted catalogue"
+
+#mongosh --host MONGODB-SERVER-IPADDRESS &>>$LOG_FILE
+
+#show dbs &>>$LOG_FILE
+#use catalogue &>>$LOG_FILE
+#show collections &>>$LOG_FILE
+#db.products.find() &>>$LOG_FILE
 
 
 

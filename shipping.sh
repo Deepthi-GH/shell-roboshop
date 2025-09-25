@@ -31,9 +31,16 @@ fi
 dnf install maven -y &>>$LOG_FILE
 VALIDATE $? "installing maven"
 
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
-VALIDATE $? "adding user"
-mkdir /app &>>$LOG_FILE
+id roboshop &>>$LOG_FILE
+if [ $? -ne 0 ]
+then 
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
+    VALIDATE $? "creating user roboshop"
+else
+    echo -e "user already existing...$Y SKIPPING $N"    
+fi
+
+mkdir -p /app &>>$LOG_FILE
 VALIDATE $? "creating /app directory"
 curl -L -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip &>>$LOG_FILE
 VALIDATE $? "downloading code"

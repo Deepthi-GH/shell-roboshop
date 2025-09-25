@@ -9,6 +9,7 @@ LOGS_FOLDER=/var/log/shell-roboshop
 SCRIPT_NAME=$( echo $0|cut -d "." -f1 )
 LOG_FILE=$LOGS_FOLDER/$SCRIPT_NAME.log
 MONGODB_HOST=mongodb.deepthi.cloud
+SCRIPT_DIR=pwd
 mkdir -p $LOGS_FOLDER
 echo "script started at: $(date)" |tee -a $LOG_FILE
 if [ $USERID -ne 0 ] 
@@ -45,7 +46,7 @@ VALIDATE $? "unzipping the code"
 cd /app 
 npm install &>>$LOG_FILE
 VALIDATE $? "downloading dependencies"
-cp catalogue.servive /etc/systemd/system/catalogue.service
+cp $SCRIPT_DIR/catalogue.servive /etc/systemd/system/catalogue.service
 systemctl daemon-reload &>>$LOG_FILE
 VALIDATE $? "daemon reload"
 systemctl enable catalogue &>>$LOG_FILE

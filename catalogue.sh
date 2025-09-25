@@ -9,7 +9,7 @@ LOGS_FOLDER=/var/log/shell-roboshop
 SCRIPT_NAME=$( echo $0|cut -d "." -f1 )
 LOG_FILE=$LOGS_FOLDER/$SCRIPT_NAME.log
 MONGODB_HOST=mongodb.deepthi.cloud
-SCRIPT_DIR=$pwd
+SCRIPT_DIR=$(pwd)
 mkdir -p $LOGS_FOLDER
 echo "script started at: $(date)" |tee -a $LOG_FILE
 if [ $USERID -ne 0 ] 
@@ -73,7 +73,7 @@ VALIDATE $? "enable catalogue"
 systemctl start catalogue &>>$LOG_FILE
 VALIDATE $? "start catalogue"
 
-cp mongo.repo /etc/yum.repos.d/mongo.repo
+cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
 dnf install mongodb-mongosh -y &>>$LOG_FILE
 VALIDATE $? "installing mongodb client"
 

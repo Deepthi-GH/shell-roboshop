@@ -62,6 +62,8 @@ npm install &>>$LOG_FILE
 VALIDATE $? "downloading dependencies"
 
 cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service
+VALIDATE $? "copying service file"
+
 systemctl daemon-reload &>>$LOG_FILE
 VALIDATE $? "daemon reload"
 

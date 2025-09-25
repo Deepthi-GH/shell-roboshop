@@ -22,10 +22,10 @@ VALIDATE()
 {
     if [ $1 -ne 0 ] 
 then
-    echo -e "error::$2 installation $R failed $N"|tee -a $LOG_FILE
+    echo -e "error::$2 ...  $R failed $N"|tee -a $LOG_FILE
     exit 1
 else
-    echo -e "$2 installation is $Y success $N"|tee -a $LOG_FILE
+    echo -e "$2 ... $Y success $N"|tee -a $LOG_FILE
 fi    
 }
 
@@ -35,9 +35,15 @@ dnf module enable nodejs:20 -y &>>$LOG_FILE
 VALIDATE $? "enabling nodejs"
 dnf install nodejs -y &>>$LOG_FILE
 VALIDATE $? "installing nodejs"
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
-VALIDATE $? "user is roboshop"
-mkdir /app  &>>$LOG_FILE
+id roboshop
+if [ $? -ne 0 ]
+then 
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
+    VALIDATE $? "creating user roboshop"
+else
+    echo -e "user already existing...$Y SKIPPING $N"    
+fi
+mkdir -p /app  &>>$LOG_FILE
 VALIDATE $? "created /app directory"
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE
 cd /app 

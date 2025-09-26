@@ -45,6 +45,7 @@ VALIDATE $? "downloading code"
 cd /usr/share/nginx/html 
 unzip /tmp/frontend.zip &>>$LOG_FILE
 VALIDATE $? "unzipping code"
+rm -rf /etc/nginx/nginx.conf
 cp $SCRIPT_DIR/nginx.conf /etc/nginx/nginx.conf &>>$LOG_FILE
 VALIDATE $? "copying conf file"
 systemctl restart nginx &>>$LOG_FILE
